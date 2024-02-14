@@ -1,5 +1,8 @@
 name: first workflow
 
+env:
+  WORKFLOW_VAR: "This variable is declared at the worflow level"
+
 on:
   workflow_dispatch:
 
@@ -23,6 +26,9 @@ jobs:
           
 
   secondjob:
+    needs: firstjob
+    env:
+      JOB_VAR: "this is a job variable"
     runs-on: ubuntu-latest
     steps: 
       - name: secondJob script
@@ -30,3 +36,16 @@ jobs:
         run: |
           echo this is the second job
           echo and this is a multi-line script
+      - name: environment variables
+        env:
+          STEP_VAR:  "this variable is declared at step level"
+        run: |
+          echo $WORKFLOW_VAR
+          echo $JOB_VAR
+          echo $STEP_VAR
+          echo "The following is a secret: ${{secrets.SOME_SECRET}}, of course, 
+          \n I can't tell you because then it wouldn't be a secret"
+          echo "The following are default environment variables:"
+          echo $GITHUB_ACTOR
+          echo $GITHUB_JOB
+          echo $GITHUB_REF
